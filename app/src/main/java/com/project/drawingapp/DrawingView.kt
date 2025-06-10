@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import android.graphics.Path
+import android.view.MotionEvent
 import androidx.core.graphics.createBitmap
 
 class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
@@ -35,6 +36,36 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
         canvas = Canvas(canvasBitMap)
     }
 
+    // called by the system when user touches the screen
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        val touchX = event?.x
+        val touchY = event?.y
+
+        when(event?.action){
+            // when user put finger on the screen
+            MotionEvent.ACTION_DOWN -> {
+                drawPath.color = color
+                drawPath.brushThickness = brushSize.toFloat()
+
+                drawPath.reset() // rest the draw path initial point
+                drawPath.moveTo(touchX!!, touchY!!)
+            }
+            // when user starts to move the finger; continuously when touching
+            MotionEvent.ACTION_MOVE -> {
+                drawPath.lineTo(touchX!!, touchY!!)
+            }
+            // when user picks up the finger
+            MotionEvent.ACTION_UP -> {
+                drawPath = FingerPath(color, brushSize)
+            }
+            else -> return false
+        }
+        invalidate() // refreshing the layout for changes
+        return true
+
+        return super.onTouchEvent(event)
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawBitmap(canvasBitMap, 0f, 0f, drawPaint)
@@ -55,5 +86,5 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
         brushSize = 20.toFloat()
     }
 
-    internal inner class FingerPath(val color: Int, val brushThickness: Float): Path()
+    internal inner class FingerPath(var color: Int, var brushThickness: Float): Path()
 }
