@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import android.graphics.Path
+import android.util.TypedValue
 import android.view.MotionEvent
 import androidx.core.graphics.createBitmap
 
@@ -29,7 +30,6 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
         setUpDrawing()
     }
 
-    //
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         canvasBitMap = createBitmap(w, h)
@@ -84,6 +84,14 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
         drawPaint.strokeJoin = Paint.Join.ROUND
         drawPaint.strokeCap = Paint.Cap.ROUND
         brushSize = 20.toFloat()
+    }
+
+    fun changeBrushSize(newSize: Float){
+        brushSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            newSize, resources.displayMetrics
+        )
+        drawPaint.strokeWidth = brushSize
     }
 
     internal inner class FingerPath(var color: Int, var brushThickness: Float): Path()
