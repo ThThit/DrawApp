@@ -2,6 +2,7 @@ package com.project.drawingapp
 
 import android.app.Dialog
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
@@ -14,7 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 class MainActivity : AppCompatActivity() {
 
     private lateinit var drawingView: DrawingView
-    private lateinit var btnBrush: ImageButton
+    private lateinit var btnBrush: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

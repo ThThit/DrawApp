@@ -7,24 +7,125 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <com.project.drawingapp.DrawingView
         android:id="@+id/drawing_view"
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/itemLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_weight="0.8" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_brush"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="52dp"
-        android:contentDescription="Brush"
-        android:src="@drawable/ic_brush"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/itemLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/drawing_view"
+        app:layout_constraintBottom_toTopOf="@id/paint_tools_layout"
+        app:layout_constraintVertical_weight="0.1"
+        >
+
+        <Button
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            app:cornerRadius="0dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:backgroundTint="@color/cardview_dark_background"
+            style="@style/Widget.Material3.Button.IconButton"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/paint_tools_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_weight="0.1"
+        android:padding="10dp">
+
+        <Button
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+            app:cornerRadius="0dp"
+            android:id="@+id/btn_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/btn_gallery"
+            app:icon="@drawable/ic_gallery"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_save"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread" />
+
+        <Button
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/btn_save"
+            app:icon="@drawable/ic_save"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_gallery"
+            app:layout_constraintEnd_toStartOf="@+id/btn_color_pick"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+            android:id="@+id/btn_color_pick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:contentDescription="@string/btn_pick_color"
+            app:icon="@drawable/ic_color_pick"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_save"
+            app:layout_constraintEnd_toStartOf="@+id/btn_brush"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+            android:id="@+id/btn_brush"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:contentDescription="@string/btn_brush_size"
+            app:icon="@drawable/ic_brush"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_color_pick"
+            app:layout_constraintEnd_toStartOf="@+id/btn_undo"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+            android:id="@+id/btn_undo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:contentDescription="@string/btn_undo"
+            app:icon="@drawable/ic_undo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_brush"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
