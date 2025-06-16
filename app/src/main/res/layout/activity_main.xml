@@ -34,8 +34,8 @@
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/cardview_dark_background"
-            android:scaleX="1.7"
+            android:backgroundTint="@color/red"
+            android:scaleX="1.8"
             app:cornerRadius="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/btn_blue"
@@ -48,8 +48,8 @@
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/cardview_dark_background"
-            android:scaleX="1.7"
+            android:backgroundTint="@color/blue"
+            android:scaleX="1.8"
             app:cornerRadius="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/btn_green"
@@ -62,9 +62,8 @@
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/cardview_dark_background"
-
-            android:scaleX="1.7"
+            android:backgroundTint="@color/green"
+            android:scaleX="1.8"
             app:cornerRadius="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/btn_black"
@@ -77,9 +76,8 @@
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/cardview_dark_background"
-
-            android:scaleX="1.7"
+            android:backgroundTint="@color/black"
+            android:scaleX="1.8"
             app:cornerRadius="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/btn_erase"
@@ -89,17 +87,17 @@
 
         <Button
             android:id="@+id/btn_erase"
-            style="@style/Widget.Material3.Button.IconButton"
+            style="@style/Widget.Material3.Button.IconButton.Outlined"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/cardview_dark_background"
-            android:scaleX="1.7"
             app:cornerRadius="0dp"
+            app:icon="@drawable/ic_clean"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintStart_toStartOf="@id/btn_black"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.521" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,6 +1,7 @@
 package com.project.drawingapp
 
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
@@ -16,6 +17,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var drawingView: DrawingView
     private lateinit var btnBrush: Button
+    private lateinit var btnRed: Button
+    private lateinit var btnBlue: Button
+    private lateinit var btnGreen: Button
+    private lateinit var btnBlack: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +37,22 @@ class MainActivity : AppCompatActivity() {
         btnBrush = findViewById(R.id.btn_brush)
         btnBrush.setOnClickListener {
             showBrushDialog()
+        }
+        btnRed = findViewById(R.id.btn_red)
+        btnRed.setOnClickListener {
+            drawingView.changeBrushColor(Color.RED)
+        }
+        btnGreen = findViewById(R.id.btn_green)
+        btnGreen.setOnClickListener {
+            drawingView.changeBrushColor(Color.GREEN)
+        }
+        btnBlue = findViewById(R.id.btn_blue)
+        btnBlue.setOnClickListener {
+            drawingView.changeBrushColor(Color.BLUE)
+        }
+        btnBlack = findViewById(R.id.btn_black)
+        btnBlack.setOnClickListener {
+            drawingView.changeBrushColor(Color.BLACK)
         }
     }
 

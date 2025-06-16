@@ -1,5 +1,6 @@
 package com.project.drawingapp
 
+import android.R
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -21,7 +22,7 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
 
     // how to draw
     private lateinit var drawPaint: Paint
-    private val color = Color.BLACK
+    private var currentColor: Int = Color.BLACK
     private lateinit var  canvas: Canvas
     private lateinit var canvasBitMap: Bitmap
     private var brushSize: Float = 0.toFloat()
@@ -44,7 +45,7 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
         when(event?.action){
             // when user put finger on the screen
             MotionEvent.ACTION_DOWN -> {
-                drawPath.color = color
+                drawPath.color = currentColor
                 drawPath.brushThickness = brushSize.toFloat()
 
                 drawPath.reset() // rest the draw path initial point
@@ -56,7 +57,7 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
             }
             // when user picks up the finger
             MotionEvent.ACTION_UP -> {
-                drawPath = FingerPath(color, brushSize)
+                drawPath = FingerPath(currentColor, brushSize)
             }
             else -> return false
         }
@@ -78,8 +79,8 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
 
     private fun setUpDrawing(){
         drawPaint = Paint()
-        drawPath = FingerPath(color, brushSize)
-        drawPaint.color = color
+        drawPath = FingerPath(currentColor, brushSize)
+        drawPaint.color = currentColor
         drawPaint.style = Paint.Style.STROKE
         drawPaint.strokeJoin = Paint.Join.ROUND
         drawPaint.strokeCap = Paint.Cap.ROUND
@@ -92,6 +93,11 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
             newSize, resources.displayMetrics
         )
         drawPaint.strokeWidth = brushSize
+    }
+
+    fun changeBrushColor(colorInt: Int){
+        currentColor = colorInt
+        drawPaint.color = currentColor
     }
 
     internal inner class FingerPath(var color: Int, var brushThickness: Float): Path()
