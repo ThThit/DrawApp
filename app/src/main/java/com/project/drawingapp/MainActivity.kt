@@ -1,8 +1,10 @@
 package com.project.drawingapp
 
+import android.R.attr.onClick
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.SeekBar
@@ -13,7 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var drawingView: DrawingView
     private lateinit var btnBrush: Button
@@ -32,28 +34,22 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        btnBlack = findViewById(R.id.btn_black)
+        btnBlue = findViewById(R.id.btn_blue)
+        btnRed = findViewById(R.id.btn_red)
+        btnGreen = findViewById(R.id.btn_green)
+
         drawingView = findViewById(R.id.drawing_view)
         drawingView.changeBrushSize(20.toFloat())
         btnBrush = findViewById(R.id.btn_brush)
         btnBrush.setOnClickListener {
             showBrushDialog()
         }
-        btnRed = findViewById(R.id.btn_red)
-        btnRed.setOnClickListener {
-            drawingView.changeBrushColor(Color.RED)
-        }
-        btnGreen = findViewById(R.id.btn_green)
-        btnGreen.setOnClickListener {
-            drawingView.changeBrushColor(Color.GREEN)
-        }
-        btnBlue = findViewById(R.id.btn_blue)
-        btnBlue.setOnClickListener {
-            drawingView.changeBrushColor(Color.BLUE)
-        }
-        btnBlack = findViewById(R.id.btn_black)
-        btnBlack.setOnClickListener {
-            drawingView.changeBrushColor(Color.BLACK)
-        }
+
+        btnGreen.setOnClickListener(this)
+        btnBlack.setOnClickListener(this)
+        btnBlue.setOnClickListener(this)
+        btnRed.setOnClickListener(this)
     }
 
     private fun showBrushDialog(){
@@ -82,5 +78,20 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
+    override fun onClick(view: View?) {
+        when (view?.id){
+            R.id.btn_red->{
+                drawingView.setBrushColor(Color.RED)
+            }
+            R.id.btn_green->{
+                drawingView.setBrushColor(Color.GREEN)
+            }
+            R.id.btn_blue->{
+                drawingView.setBrushColor(Color.BLUE)
+            }
+            R.id.btn_black->{
+                drawingView.setBrushColor(Color.BLACK)
+            }
+        }
+    }
 }
