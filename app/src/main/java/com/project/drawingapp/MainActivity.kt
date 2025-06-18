@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         btnGreen = findViewById(R.id.btn_green)
 
         drawingView = findViewById(R.id.drawing_view)
-        drawingView.changeBrushSize(20.toFloat())
+        drawingView.changeBrushSize(5.toFloat())
         btnBrush = findViewById(R.id.btn_brush)
         btnBrush.setOnClickListener {
             showBrushDialog()
