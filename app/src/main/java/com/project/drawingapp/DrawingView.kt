@@ -1,16 +1,15 @@
 package com.project.drawingapp
 
-import android.R
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.util.AttributeSet
-import android.view.View
 import android.graphics.Path
+import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
+import android.view.View
 import androidx.core.graphics.createBitmap
 
 class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
@@ -39,7 +38,7 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
     }
 
     // called by the system when user touches the screen
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
+    override fun  onTouchEvent(event: MotionEvent?): Boolean {
         val touchX = event?.x
         val touchY = event?.y
 
@@ -64,6 +63,10 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
         }
         invalidate() // refreshing the layout for changes
         return true
+    }
+
+    override fun performClick(): Boolean {
+        return super.performClick()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -95,15 +98,24 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
         drawPaint.strokeWidth = brushSize
     }
 
-    fun setBrushColor(colorInt: Int){
-        currentColor = colorInt
+    fun setBrushColor(newColor: Int){
+        currentColor = newColor
         drawPaint.color = currentColor
+//        if (newColor is String){
+//            currentColor = Color.parseColor(newColor)
+//            drawPaint.color = currentColor
+//        } else {
+//            currentColor = newColor as Int
+//            drawPaint.color = currentColor
+//
+//        }
+
     }
 
     // undo drawings
     fun undoPath(){
         if (paths.isNotEmpty()){
-            paths.removeAt(paths.size - 1)
+            paths.removeAt(paths.size - 2)
             // refresh the view
             invalidate()
         }
