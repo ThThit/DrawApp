@@ -1,10 +1,15 @@
 package com.project.drawingapp
 
 import android.Manifest
+import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.SeekBar
@@ -13,7 +18,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
+import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
@@ -49,6 +54,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
                 }
+            }
+        }
+
+    // launcher to pick image from gallery
+    private val pickImageLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK){
+                val data: Intent? = result.data
+                val selectedImageUri: Uri? = data?.data
+                if (selectedImageUri != null){
+                    Toast.makeText(this, "Image selected", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Failed to get image URI", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Image selection cancelled", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -155,30 +176,30 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     // request storage permission
     private fun requestStoragePermission(){
-        // check if the permission is already granted
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED){
-            Toast.makeText(this, "Gallery permission already granted.", Toast.LENGTH_SHORT).show()
-        } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_MEDIA_IMAGES)) {
-            showRationDialog()
-        } else {
-            requestPermissions.launch(arrayOf(Manifest.permission.READ_MEDIA_IMAGES))
+        val permission = Manifest.permission.READ_MEDIA_IMAGES
+
+        when {
+            ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED -> {
+                // Permission already granted
+                Toast.makeText(this, "Gallery permission already granted.", Toast.LENGTH_SHORT).show()
+                showGallery()
+            }
+            shouldShowRequestPermissionRationale(permission) -> {
+                // Optional: Explain to the user why this permission is needed (you can just request directly too)
+                requestPermissions.launch(arrayOf(permission)) // OR show a custom dialog here if you want
+            }
+            else -> {
+                // First time request or "Don't ask again" was not set
+                requestPermissions.launch(arrayOf(permission))
+            }
         }
     }
 
-    private fun showRationDialog(){
-        val permission = Manifest.permission.READ_MEDIA_IMAGES
-
-        AlertDialog.Builder(this)
-            .setTitle("Gallery Permission")
-            .setMessage("Need storage permission to access gallery")
-            .setPositiveButton(android.R.string.ok) {dialog, _->
-                requestPermissions.launch(arrayOf(permission))
-                dialog.dismiss()
-            }
-            .setNegativeButton(android.R.string.cancel) { dialog, _->
-                Toast.makeText(this, "Gallery access denied!", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-            }
-            .show()
+    private fun showGallery() {
+        val intent = Intent(MediaStore.ACTION_PICK_IMAGES).apply {
+            type = "image/*"
+        }
+        pickImageLauncher.launch(intent)
     }
+
 }
