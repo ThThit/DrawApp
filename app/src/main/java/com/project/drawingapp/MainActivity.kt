@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var btnBlue: Button
     private lateinit var btnGreen: Button
     private lateinit var btnBlack: Button
+    private lateinit var btnUndo: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         btnBlue = findViewById(R.id.btn_blue)
         btnRed = findViewById(R.id.btn_red)
         btnGreen = findViewById(R.id.btn_green)
+        btnUndo = findViewById(R.id.btn_undo)
 
         drawingView = findViewById(R.id.drawing_view)
         drawingView.changeBrushSize(5.toFloat())
@@ -46,6 +48,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             showBrushDialog()
         }
 
+        btnUndo.setOnClickListener(this)
         btnGreen.setOnClickListener(this)
         btnBlack.setOnClickListener(this)
         btnBlue.setOnClickListener(this)
@@ -91,6 +94,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.btn_black->{
                 drawingView.setBrushColor(Color.BLACK)
+            }
+            R.id.btn_undo->{
+                drawingView.undoPath()
             }
         }
     }
