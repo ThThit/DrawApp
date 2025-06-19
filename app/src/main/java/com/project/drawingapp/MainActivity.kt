@@ -1,15 +1,23 @@
 package com.project.drawingapp
 
+import android.Manifest
 import android.app.Dialog
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import yuku.ambilwarna.AmbilWarnaDialog
@@ -26,6 +34,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var btnBlack: Button
     private lateinit var btnUndo: Button
     private lateinit var btnPickColor: Button
+    private lateinit var btnGallery: Button
+
+    // permission request
+    val requestPermissions: ActivityResultLauncher<Array<String>> =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            permissions.entries.forEach { (permission, isGranted) ->
+                when (permission){
+                    Manifest.permission.READ_MEDIA_IMAGES -> {
+                        if (isGranted){
+                            Toast.makeText(this, "Gallery permission granted", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Gallery permission denied", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +68,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         btnGreen = findViewById(R.id.btn_green)
         btnUndo = findViewById(R.id.btn_undo)
         btnPickColor = findViewById(R.id.btn_color_pick)
+        btnGallery = findViewById(R.id.btn_gallery)
 
         drawingView = findViewById(R.id.drawing_view)
         drawingView.changeBrushSize(5.toFloat())
@@ -57,6 +83,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         btnBlue.setOnClickListener(this)
         btnRed.setOnClickListener(this)
         btnPickColor.setOnClickListener(this)
+        btnGallery.setOnClickListener(this)
     }
 
     private fun showBrushDialog(){
@@ -85,6 +112,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         )
     }
 
+    // button actions
     override fun onClick(view: View?) {
         when (view?.id){
             R.id.btn_red->{
@@ -105,6 +133,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.btn_color_pick->{
                 showColorPicker()
             }
+            R.id.btn_gallery->{
+                requestStoragePermission()
+            }
         }
     }
 
@@ -120,5 +151,34 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
         dialog.show()
+    }
+
+    // request storage permission
+    private fun requestStoragePermission(){
+        // check if the permission is already granted
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(this, "Gallery permission already granted.", Toast.LENGTH_SHORT).show()
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_MEDIA_IMAGES)) {
+            showRationDialog()
+        } else {
+            requestPermissions.launch(arrayOf(Manifest.permission.READ_MEDIA_IMAGES))
+        }
+    }
+
+    private fun showRationDialog(){
+        val permission = Manifest.permission.READ_MEDIA_IMAGES
+
+        AlertDialog.Builder(this)
+            .setTitle("Gallery Permission")
+            .setMessage("Need storage permission to access gallery")
+            .setPositiveButton(android.R.string.ok) {dialog, _->
+                requestPermissions.launch(arrayOf(permission))
+                dialog.dismiss()
+            }
+            .setNegativeButton(android.R.string.cancel) { dialog, _->
+                Toast.makeText(this, "Gallery access denied!", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            .show()
     }
 }
