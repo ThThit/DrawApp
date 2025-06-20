@@ -2,6 +2,7 @@ package com.project.drawingapp
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -45,12 +46,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     val requestPermissions: ActivityResultLauncher<Array<String>> =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             permissions.entries.forEach { (permission, isGranted) ->
-                when (permission){
+                when (permission) {
                     Manifest.permission.READ_MEDIA_IMAGES -> {
-                        if (isGranted){
-                            Toast.makeText(this, "Gallery permission granted", Toast.LENGTH_SHORT).show()
+                        if (isGranted) {
+                            Toast.makeText(this, "Gallery permission granted", Toast.LENGTH_SHORT)
+                                .show()
                         } else {
-                            Toast.makeText(this, "Gallery permission denied", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Gallery permission denied", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }
@@ -60,11 +63,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     // launcher to pick image from gallery
     private val pickImageLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK){
+            if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
                 val selectedImageUri: Uri? = data?.data
-                if (selectedImageUri != null){
+                if (selectedImageUri != null) {
                     Toast.makeText(this, "Image selected", Toast.LENGTH_SHORT).show()
+                    TODO("Do something with the photo")
                 } else {
                     Toast.makeText(this, "Failed to get image URI", Toast.LENGTH_SHORT).show()
                 }
@@ -107,7 +111,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         btnGallery.setOnClickListener(this)
     }
 
-    private fun showBrushDialog(){
+    private fun showBrushDialog() {
         val brushDialog = Dialog(this)
         brushDialog.setContentView(R.layout.dialog_brush)
 
@@ -135,34 +139,40 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     // button actions
     override fun onClick(view: View?) {
-        when (view?.id){
-            R.id.btn_red->{
+        when (view?.id) {
+            R.id.btn_red -> {
                 drawingView.setBrushColor(Color.RED)
             }
-            R.id.btn_green->{
+
+            R.id.btn_green -> {
                 drawingView.setBrushColor(Color.GREEN)
             }
-            R.id.btn_blue->{
+
+            R.id.btn_blue -> {
                 drawingView.setBrushColor(Color.BLUE)
             }
-            R.id.btn_black->{
+
+            R.id.btn_black -> {
                 drawingView.setBrushColor(Color.BLACK)
             }
-            R.id.btn_undo->{
+
+            R.id.btn_undo -> {
                 drawingView.undoPath()
             }
-            R.id.btn_color_pick->{
+
+            R.id.btn_color_pick -> {
                 showColorPicker()
             }
-            R.id.btn_gallery->{
+
+            R.id.btn_gallery -> {
                 requestStoragePermission()
             }
         }
     }
 
     // color picker dialog
-    private fun showColorPicker(){
-        val dialog = AmbilWarnaDialog(this, Color.BLUE, object: OnAmbilWarnaListener{
+    private fun showColorPicker() {
+        val dialog = AmbilWarnaDialog(this, Color.BLUE, object : OnAmbilWarnaListener {
             override fun onCancel(dialog: AmbilWarnaDialog?) {
 
             }
@@ -175,19 +185,32 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     // request storage permission
-    private fun requestStoragePermission(){
+    private fun requestStoragePermission() {
         val permission = Manifest.permission.READ_MEDIA_IMAGES
 
         when {
-            ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED -> {
-                // Permission already granted
-                Toast.makeText(this, "Gallery permission already granted.", Toast.LENGTH_SHORT).show()
+            ContextCompat.checkSelfPermission(
+                this,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED -> {
                 showGallery()
             }
+
             shouldShowRequestPermissionRationale(permission) -> {
                 // Optional: Explain to the user why this permission is needed (you can just request directly too)
-                requestPermissions.launch(arrayOf(permission)) // OR show a custom dialog here if you want
+                AlertDialog.Builder(this)
+                    .setTitle("Storage permission")
+                    .setMessage("Need permission to access photos")
+                    .setPositiveButton("Ok") { dialog, _ ->
+                        dialog.dismiss()
+                        requestPermissions.launch(arrayOf(permission))
+                    }
+                    .setNegativeButton("Cancel") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create().show()
             }
+
             else -> {
                 // First time request or "Don't ask again" was not set
                 requestPermissions.launch(arrayOf(permission))
