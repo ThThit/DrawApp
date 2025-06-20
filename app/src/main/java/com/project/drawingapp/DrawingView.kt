@@ -15,7 +15,6 @@ import androidx.core.graphics.createBitmap
 class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
     // drawing path
     private lateinit var drawPath: FingerPath
-
     // what to draw
     private lateinit var canvasPaint: Paint
 
@@ -34,7 +33,6 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         canvasBitMap = createBitmap(w, h)
-        canvasBitMap.eraseColor(Color.WHITE)
         canvas = Canvas(canvasBitMap)
     }
 
