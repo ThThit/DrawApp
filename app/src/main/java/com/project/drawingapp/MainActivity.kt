@@ -1,33 +1,41 @@
 package com.project.drawingapp
 
 import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import yuku.ambilwarna.AmbilWarnaDialog
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener
+import java.io.File
+import java.io.IOException
+import java.io.OutputStream
+import java.util.UUID
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -41,6 +49,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var btnUndo: Button
     private lateinit var btnPickColor: Button
     private lateinit var btnGallery: Button
+    private lateinit var btnSave: Button
 
     // permission request
     val requestPermissions: ActivityResultLauncher<Array<String>> =
@@ -60,15 +69,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
+
     // launcher to pick image from gallery
     private val pickImageLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 val data: Intent? = result.data
                 val selectedImageUri: Uri? = data?.data
                 if (selectedImageUri != null) {
-                    Toast.makeText(this, "Image selected", Toast.LENGTH_SHORT).show()
-                    TODO("Do something with the photo")
+                    // set image
+                    findViewById<ImageView>(R.id.gallery_img).setImageURI(selectedImageUri)
                 } else {
                     Toast.makeText(this, "Failed to get image URI", Toast.LENGTH_SHORT).show()
                 }
@@ -98,9 +108,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         drawingView = findViewById(R.id.drawing_view)
         drawingView.changeBrushSize(5.toFloat())
         btnBrush = findViewById(R.id.btn_brush)
-        btnBrush.setOnClickListener {
-            showBrushDialog()
-        }
+        btnSave = findViewById(R.id.btn_save)
 
         btnUndo.setOnClickListener(this)
         btnGreen.setOnClickListener(this)
@@ -109,6 +117,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         btnRed.setOnClickListener(this)
         btnPickColor.setOnClickListener(this)
         btnGallery.setOnClickListener(this)
+        btnBrush.setOnClickListener(this)
+        btnSave.setOnClickListener(this)
     }
 
     private fun showBrushDialog() {
@@ -140,32 +150,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     // button actions
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.btn_red -> {
-                drawingView.setBrushColor(Color.RED)
+            R.id.btn_brush ->{ showBrushDialog()
             }
-
-            R.id.btn_green -> {
-                drawingView.setBrushColor(Color.GREEN)
+            R.id.btn_red -> { drawingView.setBrushColor(Color.RED)
             }
-
-            R.id.btn_blue -> {
-                drawingView.setBrushColor(Color.BLUE)
+            R.id.btn_green -> { drawingView.setBrushColor(Color.GREEN)
             }
-
-            R.id.btn_black -> {
-                drawingView.setBrushColor(Color.BLACK)
+            R.id.btn_blue -> { drawingView.setBrushColor(Color.BLUE)
             }
-
-            R.id.btn_undo -> {
-                drawingView.undoPath()
+            R.id.btn_black -> { drawingView.setBrushColor(Color.BLACK)
             }
-
-            R.id.btn_color_pick -> {
-                showColorPicker()
+            R.id.btn_undo -> { drawingView.undoPath()
             }
+            R.id.btn_color_pick -> { showColorPicker()
+            }
+            R.id.btn_gallery -> { requestStoragePermission()
+            }
+            R.id.btn_save -> {
+                Toast.makeText(this, "Save drawing", Toast.LENGTH_SHORT).show()
+                val canvas: Bitmap = getCanvasBitMap(drawingView)
+                saveDrawing(canvas)
 
-            R.id.btn_gallery -> {
-                requestStoragePermission()
             }
         }
     }
@@ -190,25 +195,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         when {
             ContextCompat.checkSelfPermission(
-                this,
-                permission
+                this, permission
             ) == PackageManager.PERMISSION_GRANTED -> {
                 showGallery()
             }
 
             shouldShowRequestPermissionRationale(permission) -> {
                 // Optional: Explain to the user why this permission is needed (you can just request directly too)
-                AlertDialog.Builder(this)
-                    .setTitle("Storage permission")
+                AlertDialog.Builder(this).setTitle("Storage permission")
                     .setMessage("Need permission to access photos")
                     .setPositiveButton("Ok") { dialog, _ ->
                         dialog.dismiss()
                         requestPermissions.launch(arrayOf(permission))
-                    }
-                    .setNegativeButton("Cancel") { dialog, _ ->
+                    }.setNegativeButton("Cancel") { dialog, _ ->
                         dialog.dismiss()
-                    }
-                    .create().show()
+                    }.create().show()
             }
 
             else -> {
@@ -223,6 +224,63 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             type = "image/*"
         }
         pickImageLauncher.launch(intent)
+    }
+
+    // save drawing canvas
+    private fun getCanvasBitMap(view: View): Bitmap{
+        val bitmap = createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        return bitmap
+    }
+    private fun saveDrawing(bitmap: Bitmap) {
+        val filename = "drawing-${UUID.randomUUID()}.png"
+        var fos: OutputStream? = null
+        var imageUri: Uri? = null
+
+        try {
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + "MyDrawings") // custom dict
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
+            }
+            val resolver = contentResolver
+            imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            if (imageUri == null) {
+                throw IOException("Failed to create new MediaStore record.")
+            }
+
+            fos = resolver.openOutputStream(imageUri)
+
+            if (fos != null){
+                val format = if (filename.endsWith(".png")) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG
+                bitmap.compress(format, 90, fos) // 90 for JPEG quality, 100 for PNG
+                fos.flush()
+                fos.close()
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.IS_PENDING, 0) // Mark the file as complete
+                }
+                resolver.update(imageUri, contentValues, null, null)
+                Toast.makeText(this, "Drawing saved to gallery!", Toast.LENGTH_SHORT).show()
+                Log.d("SaveDrawing", "Saved to URI: $imageUri")
+            } else {
+                Toast.makeText(this, "Failed to get output stream.", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception){
+            e.printStackTrace()
+            Toast.makeText(this, "Error saving drawing: ${e.message}", Toast.LENGTH_LONG).show()
+            // If saving failed on Android 10+ and IS_PENDING was set, delete the partial file
+            imageUri?.let {
+                contentResolver.delete(it, null, null)
+            }
+        } finally {
+            try {
+                fos?.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
     }
 
 }

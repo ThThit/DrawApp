@@ -7,4 +7,5 @@
     <string name="btn_pick_color">Choose Color</string>
     <string name="btn_brush_size">Change Brush Size</string>
     <string name="btn_undo">Undo Drawing</string>
+    <string name="drawing_Image_description">Gallery Image</string>
 </resources>
