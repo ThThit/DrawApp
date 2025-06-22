@@ -8,4 +8,7 @@
     <string name="btn_brush_size">Change Brush Size</string>
     <string name="btn_undo">Undo Drawing</string>
     <string name="drawing_Image_description">Gallery Image</string>
+    <string name="nav_setting">Settings</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_share">Share Drawing</string>
 </resources>
