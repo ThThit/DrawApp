@@ -70,7 +70,8 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawBitmap(canvasBitMap, 0f, 0f, drawPaint)
+        canvasPaint = Paint(Color.WHITE)
+        canvas.drawBitmap(canvasBitMap, 0f, 0f, canvasPaint)
 
         for (path in paths){
             drawPaint.strokeWidth = path.brushThickness
@@ -100,21 +101,12 @@ class DrawingView (context: Context, attrs: AttributeSet): View(context, attrs){
     fun setBrushColor(newColor: Int){
         currentColor = newColor
         drawPaint.color = currentColor
-//        if (newColor is String){
-//            currentColor = Color.parseColor(newColor)
-//            drawPaint.color = currentColor
-//        } else {
-//            currentColor = newColor as Int
-//            drawPaint.color = currentColor
-//
-//        }
-
     }
 
     // undo drawings
     fun undoPath(){
         if (paths.isNotEmpty()){
-            paths.removeAt(paths.size - 2)
+            paths.removeAt(paths.size - 1)
             // refresh the view
             invalidate()
         }
